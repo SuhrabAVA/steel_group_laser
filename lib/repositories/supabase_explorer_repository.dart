@@ -22,7 +22,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
   User _requireUser() {
     final user = _client.auth.currentUser;
     if (user == null) {
-      throw const AppException('User is not authenticated.');
+      throw const AppException('Пользователь не авторизован.');
     }
     return user;
   }
@@ -33,7 +33,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     try {
       final result = await _client.rpc(
         'ensure_user_root_folder',
-        params: {'root_name': 'Home'},
+        params: {'root_name': 'Главная'},
       );
 
       if (result is String && result.isNotEmpty) {
@@ -47,7 +47,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
         }
       }
 
-      throw const AppException('Failed to resolve root folder.');
+      throw const AppException('Не удалось определить корневую папку.');
     } catch (error, stackTrace) {
       throw _toAppException(error, stackTrace);
     }
@@ -186,7 +186,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     final user = _requireUser();
     final localFile = File(localPath);
     if (!localFile.existsSync()) {
-      throw const AppException('File not found on local disk.');
+      throw const AppException('Файл не найден на локальном диске.');
     }
 
     final rawName = p.basename(localFile.path);
@@ -298,7 +298,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     if (error is PostgrestException) {
       if (error.code == '23505') {
         return AppException(
-          'Name conflict: an item with this name already exists in the target folder.',
+          'Конфликт имен: элемент с таким именем уже существует в целевой папке.',
           cause: error,
           stackTrace: stackTrace,
         );
@@ -320,7 +320,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
   String _sanitizeFolderName(String value) {
     final cleaned = value.trim().replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
     if (cleaned.isEmpty) {
-      throw const AppException('Folder name cannot be empty.');
+      throw const AppException('Имя папки не может быть пустым.');
     }
     return cleaned;
   }
@@ -328,7 +328,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
   String _sanitizeFileName(String value) {
     final cleaned = value.trim().replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
     if (cleaned.isEmpty) {
-      throw const AppException('File name cannot be empty.');
+      throw const AppException('Имя файла не может быть пустым.');
     }
     return cleaned;
   }

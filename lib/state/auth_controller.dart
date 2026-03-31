@@ -84,7 +84,7 @@ class AuthController extends StateNotifier<AuthViewState> {
         user: _authService.currentUser,
         isLoading: false,
         errorMessage:
-            'Registration created. Confirm email if your Supabase project requires it.',
+            'Регистрация создана. Подтвердите email, если это требуется в вашем проекте Supabase.',
       );
     } on AuthException catch (error) {
       state = state.copyWith(isLoading: false, errorMessage: error.message);

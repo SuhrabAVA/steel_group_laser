@@ -148,7 +148,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
                             }
                             await _guarded(() async {
                               await controller.uploadFiles(paths);
-                              _showSuccess('Uploaded ${paths.length} file(s)');
+                              _showSuccess('Загружено файлов: ${paths.length}');
                             });
                           },
                           child: GestureDetector(
@@ -184,7 +184,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
                                               );
                                             } else {
                                               _showInfoDialog(
-                                                title: 'File info',
+                                                title: 'Информация о файле',
                                                 lines: _fileInfoLines(
                                                   entry.file!,
                                                   state,
@@ -212,7 +212,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
                                         ),
                                       ),
                                       child: const Text(
-                                        'Drop files to upload into current folder',
+                                        'Перетащите файлы для загрузки в текущую папку',
                                         style: TextStyle(
                                           color: AppColors.textPrimary,
                                           fontWeight: FontWeight.w600,
@@ -274,7 +274,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           const SizedBox(width: 12),
           const Expanded(
             child: Text(
-              'Steel Explorer',
+              'Проводник файлов',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
           ),
@@ -284,7 +284,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
               controller: _searchController,
               onChanged: controller.setSearchQuery,
               decoration: InputDecoration(
-                hintText: 'Search in current folder',
+                hintText: 'Поиск в текущей папке',
                 prefixIcon: const Icon(Icons.search),
                 isDense: true,
                 filled: true,
@@ -304,29 +304,29 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           OutlinedButton.icon(
             onPressed: () => _createFolderDialog(),
             icon: const Icon(Icons.create_new_folder_outlined),
-            label: const Text('Create folder'),
+            label: const Text('Создать папку'),
           ),
           const SizedBox(width: 8),
           FilledButton.icon(
             onPressed: _pickAndUpload,
             icon: const Icon(Icons.upload_file_outlined),
-            label: const Text('Upload'),
+            label: const Text('Загрузить'),
           ),
           const SizedBox(width: 8),
           IconButton(
-            tooltip: 'Refresh',
+            tooltip: 'Обновить',
             onPressed: () async {
               await _guarded(() => controller.refresh());
             },
             icon: const Icon(Icons.refresh),
           ),
           IconButton(
-            tooltip: state.gridMode ? 'List view' : 'Grid view',
+            tooltip: state.gridMode ? 'Список' : 'Сетка',
             onPressed: () => controller.setGridMode(!state.gridMode),
             icon: Icon(state.gridMode ? Icons.view_list : Icons.grid_view),
           ),
           IconButton(
-            tooltip: 'Download selected',
+            tooltip: 'Скачать выбранное',
             onPressed: selectedEntry?.isFolder == false
                 ? () => _downloadFile(selectedEntry!.file!)
                 : null,
@@ -335,8 +335,8 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           const SizedBox(width: 10),
           Text(
             state.selectedItemKeys.isEmpty
-                ? 'No selection'
-                : '${state.selectedItemKeys.length} selected',
+                ? 'Ничего не выбрано'
+                : '${state.selectedItemKeys.length} выбрано',
             style: const TextStyle(color: AppColors.textMuted),
           ),
           const SizedBox(width: 10),
@@ -345,7 +345,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
               await ref.read(authControllerProvider.notifier).signOut();
             },
             icon: const Icon(Icons.logout),
-            label: const Text('Sign out'),
+            label: const Text('Выйти'),
           ),
         ],
       ),
@@ -364,13 +364,13 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
       items: const [
         PopupMenuItem(
           value: _CanvasAction.createFolder,
-          child: Text('Create folder'),
+          child: Text('Создать папку'),
         ),
         PopupMenuItem(
           value: _CanvasAction.uploadFile,
-          child: Text('Upload file'),
+          child: Text('Загрузить файл'),
         ),
-        PopupMenuItem(value: _CanvasAction.refresh, child: Text('Refresh')),
+        PopupMenuItem(value: _CanvasAction.refresh, child: Text('Обновить')),
       ],
     );
 
@@ -405,36 +405,36 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         globalPosition.dy,
       ),
       items: [
-        const PopupMenuItem(value: _EntryAction.open, child: Text('Open')),
+        const PopupMenuItem(value: _EntryAction.open, child: Text('Открыть')),
         const PopupMenuItem(
           value: _EntryAction.createFolder,
-          child: Text('Create subfolder'),
+          child: Text('Создать подпапку'),
         ),
         const PopupMenuItem(
           value: _EntryAction.uploadFile,
-          child: Text('Upload file'),
+          child: Text('Загрузить файл'),
         ),
         if (!folder.isRoot)
           const PopupMenuItem(
             value: _EntryAction.rename,
-            child: Text('Rename'),
+            child: Text('Переименовать'),
           ),
         if (!folder.isRoot)
           const PopupMenuItem(
             value: _EntryAction.move,
-            child: Text('Move to...'),
+            child: Text('Переместить в...'),
           ),
         if (!folder.isRoot)
           const PopupMenuItem(
             value: _EntryAction.delete,
-            child: Text('Delete'),
+            child: Text('Удалить'),
           ),
         const PopupMenuDivider(),
         const PopupMenuItem(
           value: _EntryAction.copyPath,
-          child: Text('Copy path'),
+          child: Text('Копировать путь'),
         ),
-        const PopupMenuItem(value: _EntryAction.info, child: Text('Show info')),
+        const PopupMenuItem(value: _EntryAction.info, child: Text('Показать информацию')),
       ],
     );
 
@@ -451,16 +451,16 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         await _pickAndUpload();
       case _EntryAction.rename:
         final renamed = await _promptText(
-          title: 'Rename folder',
+          title: 'Переименовать папку',
           initialValue: folder.name,
-          actionLabel: 'Rename',
+          actionLabel: 'Переименовать',
         );
         if (renamed != null && renamed != folder.name) {
           await _guarded(
             () =>
                 controller.renameFolder(folderId: folder.id, newName: renamed),
           );
-          _showSuccess('Folder renamed');
+          _showSuccess('Папка переименована');
         }
       case _EntryAction.move:
         final target = await _showMoveFolderDialog(folder);
@@ -471,24 +471,27 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
               targetParentId: target,
             ),
           );
-          _showSuccess('Folder moved');
+          _showSuccess('Папка перемещена');
         }
       case _EntryAction.delete:
         final confirmed = await _confirm(
-          title: 'Delete folder?',
+          title: 'Удалить папку?',
           message:
-              'Folder "${folder.name}" and all nested files/folders will be permanently deleted.',
-          confirmLabel: 'Delete',
+              'Папка "${folder.name}" и все вложенные файлы/папки будут удалены безвозвратно.',
+          confirmLabel: 'Удалить',
         );
         if (confirmed) {
           await _guarded(() => controller.deleteFolder(folder.id));
-          _showSuccess('Folder deleted');
+          _showSuccess('Папка удалена');
         }
       case _EntryAction.copyPath:
         await Clipboard.setData(ClipboardData(text: folder.path));
-        _showSuccess('Path copied');
+        _showSuccess('Путь скопирован');
       case _EntryAction.info:
-        _showInfoDialog(title: 'Folder info', lines: _folderInfoLines(folder));
+        _showInfoDialog(
+          title: 'Информация о папке',
+          lines: _folderInfoLines(folder),
+        );
       case _EntryAction.download:
       case _EntryAction.refresh:
     }
@@ -509,28 +512,28 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         globalPosition.dy,
       ),
       items: [
-        const PopupMenuItem(value: _EntryAction.open, child: Text('Open')),
-        const PopupMenuItem(value: _EntryAction.rename, child: Text('Rename')),
+        const PopupMenuItem(value: _EntryAction.open, child: Text('Открыть')),
+        const PopupMenuItem(value: _EntryAction.rename, child: Text('Переименовать')),
         const PopupMenuItem(
           value: _EntryAction.move,
-          child: Text('Move to...'),
+          child: Text('Переместить в...'),
         ),
         if (!entry.isFolder)
           const PopupMenuItem(
             value: _EntryAction.download,
-            child: Text('Download'),
+            child: Text('Скачать'),
           ),
-        const PopupMenuItem(value: _EntryAction.delete, child: Text('Delete')),
+        const PopupMenuItem(value: _EntryAction.delete, child: Text('Удалить')),
         const PopupMenuItem(
           value: _EntryAction.refresh,
-          child: Text('Refresh'),
+          child: Text('Обновить'),
         ),
         const PopupMenuDivider(),
         const PopupMenuItem(
           value: _EntryAction.copyPath,
-          child: Text('Copy path'),
+          child: Text('Копировать путь'),
         ),
-        const PopupMenuItem(value: _EntryAction.info, child: Text('Show info')),
+        const PopupMenuItem(value: _EntryAction.info, child: Text('Показать информацию')),
       ],
     );
 
@@ -544,7 +547,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           await _guarded(() => controller.openFolder(entry.id));
         } else {
           _showInfoDialog(
-            title: 'File info',
+            title: 'Информация о файле',
             lines: _fileInfoLines(
               entry.file!,
               ref.read(explorerControllerProvider),
@@ -553,9 +556,9 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         }
       case _EntryAction.rename:
         final renamed = await _promptText(
-          title: entry.isFolder ? 'Rename folder' : 'Rename file',
+          title: entry.isFolder ? 'Переименовать папку' : 'Переименовать файл',
           initialValue: entry.name,
-          actionLabel: 'Rename',
+          actionLabel: 'Переименовать',
         );
         if (renamed != null && renamed != entry.name) {
           if (entry.isFolder) {
@@ -563,12 +566,12 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
               () =>
                   controller.renameFolder(folderId: entry.id, newName: renamed),
             );
-            _showSuccess('Folder renamed');
+            _showSuccess('Папка переименована');
           } else {
             await _guarded(
               () => controller.renameFile(fileId: entry.id, newName: renamed),
             );
-            _showSuccess('File renamed');
+            _showSuccess('Файл переименован');
           }
         }
       case _EntryAction.move:
@@ -582,7 +585,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
                 targetParentId: target,
               ),
             );
-            _showSuccess('Folder moved');
+            _showSuccess('Папка перемещена');
           }
         } else {
           final file = entry.file!;
@@ -592,7 +595,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
               () =>
                   controller.moveFile(fileId: file.id, targetFolderId: target),
             );
-            _showSuccess('File moved');
+            _showSuccess('Файл перемещен');
           }
         }
       case _EntryAction.download:
@@ -601,19 +604,19 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         }
       case _EntryAction.delete:
         final confirmed = await _confirm(
-          title: entry.isFolder ? 'Delete folder?' : 'Delete file?',
+          title: entry.isFolder ? 'Удалить папку?' : 'Удалить файл?',
           message: entry.isFolder
-              ? 'Folder "${entry.name}" and all nested content will be deleted.'
-              : 'File "${entry.name}" will be deleted permanently.',
-          confirmLabel: 'Delete',
+              ? 'Папка "${entry.name}" и все вложенное содержимое будут удалены.'
+              : 'Файл "${entry.name}" будет удален безвозвратно.',
+          confirmLabel: 'Удалить',
         );
         if (confirmed) {
           if (entry.isFolder) {
             await _guarded(() => controller.deleteFolder(entry.id));
-            _showSuccess('Folder deleted');
+            _showSuccess('Папка удалена');
           } else {
             await _guarded(() => controller.deleteFile(entry.file!));
-            _showSuccess('File deleted');
+            _showSuccess('Файл удален');
           }
         }
       case _EntryAction.refresh:
@@ -622,16 +625,16 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         final state = ref.read(explorerControllerProvider);
         final path = _entryPath(entry, state);
         await Clipboard.setData(ClipboardData(text: path));
-        _showSuccess('Path copied');
+        _showSuccess('Путь скопирован');
       case _EntryAction.info:
         if (entry.isFolder) {
           _showInfoDialog(
-            title: 'Folder info',
+            title: 'Информация о папке',
             lines: _folderInfoLines(entry.folder!),
           );
         } else {
           _showInfoDialog(
-            title: 'File info',
+            title: 'Информация о файле',
             lines: _fileInfoLines(
               entry.file!,
               ref.read(explorerControllerProvider),
@@ -645,10 +648,10 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
 
   Future<void> _createFolderDialog({String? parentId}) async {
     final name = await _promptText(
-      title: 'Create folder',
+      title: 'Создать папку',
       initialValue: '',
-      actionLabel: 'Create',
-      hintText: 'Folder name',
+      actionLabel: 'Создать',
+      hintText: 'Имя папки',
     );
 
     if (name == null || name.trim().isEmpty) {
@@ -659,7 +662,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
       await ref
           .read(explorerControllerProvider.notifier)
           .createFolder(name, parentId: parentId);
-      _showSuccess('Folder created');
+      _showSuccess('Папка создана');
     });
   }
 
@@ -667,7 +670,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       withData: false,
-      dialogTitle: 'Select file(s) to upload',
+      dialogTitle: 'Выберите файл(ы) для загрузки',
     );
 
     final paths =
@@ -678,7 +681,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
 
     await _guarded(() async {
       await ref.read(explorerControllerProvider.notifier).uploadFiles(paths);
-      _showSuccess('Uploaded ${paths.length} file(s)');
+      _showSuccess('Загружено файлов: ${paths.length}');
     });
   }
 
@@ -694,7 +697,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           .downloadFile(file.storagePath);
       final output = File(location.path);
       await output.writeAsBytes(bytes, flush: true);
-      _showSuccess('File saved: ${output.path}');
+      _showSuccess('Файл сохранен: ${output.path}');
     });
   }
 
@@ -710,13 +713,13 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           folderId: payload.id,
           targetParentId: targetFolderId,
         );
-        _showSuccess('Folder moved');
+        _showSuccess('Папка перемещена');
       } else {
         await controller.moveFile(
           fileId: payload.id,
           targetFolderId: targetFolderId,
         );
-        _showSuccess('File moved');
+        _showSuccess('Файл перемещен');
       }
     });
   }
@@ -729,7 +732,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         ?.id;
 
     if (selected == null) {
-      _showError('No destination folders available.');
+      _showError('Нет доступных папок назначения.');
       return null;
     }
 
@@ -740,7 +743,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           builder: (context, setState) {
             return AlertDialog(
               backgroundColor: AppColors.panel,
-              title: const Text('Move file'),
+              title: const Text('Переместить файл'),
               content: DropdownButtonFormField<String>(
                 initialValue: selected,
                 items: folders
@@ -761,13 +764,13 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
+                  child: const Text('Отмена'),
                 ),
                 FilledButton(
                   onPressed: selected == null
                       ? null
                       : () => Navigator.of(context).pop(selected),
-                  child: const Text('Move'),
+                  child: const Text('Переместить'),
                 ),
               ],
             );
@@ -789,7 +792,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         .sortedBy((candidate) => candidate.path.toLowerCase());
 
     if (candidates.isEmpty) {
-      _showError('No valid destination folder available.');
+      _showError('Нет доступной корректной папки назначения.');
       return null;
     }
 
@@ -802,13 +805,13 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           builder: (context, setState) {
             return AlertDialog(
               backgroundColor: AppColors.panel,
-              title: const Text('Move folder'),
+              title: const Text('Переместить папку'),
               content: DropdownButtonFormField<String?>(
                 initialValue: selected,
                 items: [
                   const DropdownMenuItem<String?>(
                     value: null,
-                    child: Text('Move to root'),
+                    child: Text('Переместить в корень'),
                   ),
                   ...candidates.map(
                     (candidate) => DropdownMenuItem<String?>(
@@ -826,11 +829,11 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
+                  child: const Text('Отмена'),
                 ),
                 FilledButton(
                   onPressed: () => Navigator.of(context).pop(selected),
-                  child: const Text('Move'),
+                  child: const Text('Переместить'),
                 ),
               ],
             );
@@ -864,7 +867,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: const Text('Отмена'),
             ),
             FilledButton(
               onPressed: () =>
@@ -892,7 +895,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: const Text('Отмена'),
             ),
             FilledButton(
               style: FilledButton.styleFrom(backgroundColor: AppColors.accent),
@@ -931,7 +934,7 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: const Text('Закрыть'),
             ),
           ],
         );
@@ -941,10 +944,10 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
 
   List<String> _folderInfoLines(FolderNode folder) {
     return [
-      'Name: ${folder.name}',
-      'Path: ${folder.path}',
-      'Created: ${folder.createdAt.toExplorerDate()}',
-      'Updated: ${folder.updatedAt.toExplorerDate()}',
+      'Имя: ${folder.name}',
+      'Путь: ${folder.path}',
+      'Создано: ${folder.createdAt.toExplorerDate()}',
+      'Обновлено: ${folder.updatedAt.toExplorerDate()}',
       'ID: ${folder.id}',
     ];
   }
@@ -954,16 +957,16 @@ class _ExplorerPageState extends ConsumerState<ExplorerPage> {
         state.folders
             .firstWhereOrNull((folder) => folder.id == file.folderId)
             ?.path ??
-        '(unknown folder)';
+        '(неизвестная папка)';
 
     return [
-      'Name: ${file.name}',
-      'Type: ${file.normalizedExtension.isEmpty ? 'unknown' : file.normalizedExtension}',
-      'Size: ${formatBytes(file.sizeBytes)}',
-      'Folder: $folderPath',
-      'Storage path: ${file.storagePath}',
-      'Uploaded: ${file.createdAt.toExplorerDate()}',
-      'Updated: ${file.updatedAt.toExplorerDate()}',
+      'Имя: ${file.name}',
+      'Тип: ${file.normalizedExtension.isEmpty ? 'неизвестно' : file.normalizedExtension}',
+      'Размер: ${formatBytes(file.sizeBytes)}',
+      'Папка: $folderPath',
+      'Путь в хранилище: ${file.storagePath}',
+      'Загружено: ${file.createdAt.toExplorerDate()}',
+      'Обновлено: ${file.updatedAt.toExplorerDate()}',
       'ID: ${file.id}',
     ];
   }

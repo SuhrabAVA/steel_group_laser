@@ -18,7 +18,7 @@ class EnvConfig {
     final value = dotenv.env[key]?.trim();
     if (value == null || value.isEmpty) {
       throw AppException(
-        'Environment value "$key" is missing. Fill it in .env.',
+        'Отсутствует значение переменной окружения "$key". Заполните его в .env.',
       );
     }
     return value;

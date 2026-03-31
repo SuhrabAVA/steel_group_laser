@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -35,7 +35,7 @@ class ExplorerItemsView extends StatelessWidget {
     if (entries.isEmpty) {
       return const Center(
         child: Text(
-          'Folder is empty',
+          'Папка пуста',
           style: TextStyle(color: AppColors.textMuted),
         ),
       );

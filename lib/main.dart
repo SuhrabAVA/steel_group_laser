@@ -30,7 +30,7 @@ Future<void> main() async {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Text(
-                'Startup error: $error',
+                'Ошибка запуска: $error',
                 style: const TextStyle(color: Colors.redAccent),
                 textAlign: TextAlign.center,
               ),

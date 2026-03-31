@@ -17,7 +17,7 @@ class BreadcrumbBar extends StatelessWidget {
   Widget build(BuildContext context) {
     if (breadcrumb.isEmpty) {
       return const Text(
-        'No folder selected',
+        'Папка не выбрана',
         style: TextStyle(color: AppColors.textMuted),
       );
     }
