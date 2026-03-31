@@ -361,7 +361,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
   }
 
   bool _isMissingCreateFolderRpc(PostgrestException error) {
-    final details = error.details?.toLowerCase() ?? '';
+    final details = error.details?.toString().toLowerCase() ?? '';
     final message = error.message.toLowerCase();
     return message.contains('create_user_folder') &&
         (details.contains('schema cache') || message.contains('schema cache'));
