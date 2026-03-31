@@ -292,7 +292,7 @@ with check (
     or exists (
       select 1
       from public.folders parent
-      where parent.id = parent_id
+      where parent.id = public.folders.parent_id
         and parent.owner_id = auth.uid()
     )
   )
@@ -311,7 +311,7 @@ with check (
     or exists (
       select 1
       from public.folders parent
-      where parent.id = parent_id
+      where parent.id = public.folders.parent_id
         and parent.owner_id = auth.uid()
     )
   )
