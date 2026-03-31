@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,6 +16,7 @@ class ExplorerController extends StateNotifier<ExplorerState> {
       super(const ExplorerState.initial());
 
   final ExplorerRepository _repository;
+  StreamSubscription<void>? _changesSubscription;
 
   bool _didInitialize = false;
 
@@ -22,7 +25,16 @@ class ExplorerController extends StateNotifier<ExplorerState> {
       return;
     }
     _didInitialize = true;
+    _changesSubscription = _repository.watchChanges().listen((_) {
+      unawaited(refresh(targetFolderId: state.currentFolderId, silent: true));
+    });
     await refresh();
+  }
+
+  @override
+  void dispose() {
+    _changesSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> refresh({String? targetFolderId, bool silent = false}) async {
