@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,7 +31,10 @@ Future<void> main() async {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Text(
-                'Ошибка запуска: $error',
+                kDebugMode
+                    ? 'Ошибка запуска: ${_sanitizeStartupError(error)}'
+                    : 'Ошибка запуска приложения. Проверьте настройки .env '
+                          '(SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_STORAGE_BUCKET).',
                 style: const TextStyle(color: Colors.redAccent),
                 textAlign: TextAlign.center,
               ),
@@ -40,4 +44,12 @@ Future<void> main() async {
       ),
     );
   }
+}
+
+String _sanitizeStartupError(Object error) {
+  final text = error.toString();
+  final jwtLikePattern = RegExp(
+    r'[A-Za-z0-9\-_]{20,}\.[A-Za-z0-9\-_]{20,}\.[A-Za-z0-9\-_]{20,}',
+  );
+  return text.replaceAll(jwtLikePattern, '[hidden-token]');
 }
