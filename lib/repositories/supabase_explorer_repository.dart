@@ -94,7 +94,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     required String name,
     String? parentId,
   }) async {
-    _requireUser();
+    final user = _requireUser();
     final safeName = _sanitizeFolderName(name);
     try {
       final response = await _client.rpc(
@@ -116,6 +116,26 @@ class SupabaseExplorerRepository implements ExplorerRepository {
           .single();
 
       return FolderNode.fromMap(createdFolder);
+    } on PostgrestException catch (error, stackTrace) {
+      if (!_isMissingCreateFolderRpc(error)) {
+        throw _toAppException(error, stackTrace);
+      }
+
+      try {
+        final createdFolder = await _client
+            .from('folders')
+            .insert({
+              'owner_id': user.id,
+              'parent_id': parentId,
+              'name': safeName,
+              'path': '',
+            })
+            .select()
+            .single();
+        return FolderNode.fromMap(createdFolder);
+      } catch (fallbackError, fallbackStackTrace) {
+        throw _toAppException(fallbackError, fallbackStackTrace);
+      }
     } catch (error, stackTrace) {
       throw _toAppException(error, stackTrace);
     }
@@ -338,5 +358,12 @@ class SupabaseExplorerRepository implements ExplorerRepository {
       throw const AppException('File name cannot be empty.');
     }
     return cleaned;
+  }
+
+  bool _isMissingCreateFolderRpc(PostgrestException error) {
+    final details = error.details?.toLowerCase() ?? '';
+    final message = error.message.toLowerCase();
+    return message.contains('create_user_folder') &&
+        (details.contains('schema cache') || message.contains('schema cache'));
   }
 }
