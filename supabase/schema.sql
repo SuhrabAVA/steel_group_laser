@@ -206,6 +206,46 @@ as $$
   where file.owner_id = auth.uid();
 $$;
 
+create or replace function public.create_user_folder(
+  folder_name text,
+  folder_parent_id uuid default null
+)
+returns public.folders
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  created_row public.folders;
+begin
+  if auth.uid() is null then
+    raise exception 'Not authenticated';
+  end if;
+
+  if folder_parent_id is not null then
+    if not exists (
+      select 1
+      from public.folders parent
+      where parent.id = folder_parent_id
+        and parent.owner_id = auth.uid()
+    ) then
+      raise exception 'Parent folder not found or access denied';
+    end if;
+  end if;
+
+  insert into public.folders (owner_id, parent_id, name, path)
+  values (
+    auth.uid(),
+    folder_parent_id,
+    coalesce(nullif(trim(folder_name), ''), 'Новая папка'),
+    ''
+  )
+  returning * into created_row;
+
+  return created_row;
+end;
+$$;
+
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -333,6 +373,7 @@ grant select, insert, update, delete on public.folders to authenticated;
 grant select, insert, update, delete on public.files to authenticated;
 grant execute on function public.ensure_user_root_folder(text) to authenticated;
 grant execute on function public.list_folder_storage_paths(uuid) to authenticated;
+grant execute on function public.create_user_folder(text, uuid) to authenticated;
 
 insert into storage.buckets (id, name, public)
 values ('explorer-files', 'explorer-files', false)
