@@ -88,22 +88,22 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                             ),
                             SizedBox(height: 12),
                             Text(
-                              'Secure desktop file explorer with Supabase Storage.',
+                              'Безопасный настольный файловый менеджер с Supabase Storage.',
                               style: TextStyle(
                                 color: AppColors.textMuted,
                                 fontSize: 16,
                               ),
                             ),
                             SizedBox(height: 28),
-                            _FeatureRow('Folder tree and breadcrumbs'),
+                            _FeatureRow('Дерево папок и хлебные крошки'),
                             _FeatureRow(
-                              'Drag and drop uploads from Windows Explorer',
+                              'Перетаскивание файлов из Проводника Windows',
                             ),
                             _FeatureRow(
-                              'Context menu for create, move, rename, delete',
+                              'Контекстное меню: создать, переместить, переименовать, удалить',
                             ),
                             _FeatureRow(
-                              'Secure RLS access with anon key + auth session',
+                              'Безопасный доступ по RLS через anon key и сессию авторизации',
                             ),
                           ],
                         ),
@@ -136,7 +136,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _isRegisterMode ? 'Create account' : 'Sign in',
+                                _isRegisterMode ? 'Создать аккаунт' : 'Войти',
                                 style: const TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w700,
@@ -144,7 +144,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                               ),
                               const SizedBox(height: 10),
                               const Text(
-                                'Use your Supabase Auth credentials.',
+                                'Используйте данные вашей учетной записи Supabase Auth.',
                                 style: TextStyle(color: AppColors.textMuted),
                               ),
                               const SizedBox(height: 28),
@@ -152,12 +152,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 decoration: const InputDecoration(
-                                  labelText: 'Email',
+                                  labelText: 'Эл. почта',
                                 ),
                                 validator: (value) {
                                   final v = value?.trim() ?? '';
                                   if (v.isEmpty || !v.contains('@')) {
-                                    return 'Enter valid email';
+                                    return 'Введите корректный email';
                                   }
                                   return null;
                                 },
@@ -167,12 +167,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                                 controller: _passwordController,
                                 obscureText: true,
                                 decoration: const InputDecoration(
-                                  labelText: 'Password',
+                                  labelText: 'Пароль',
                                 ),
                                 validator: (value) {
                                   final v = value?.trim() ?? '';
                                   if (v.length < 6) {
-                                    return 'Minimum 6 characters';
+                                    return 'Минимум 6 символов';
                                   }
                                   return null;
                                 },
@@ -219,8 +219,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                                         )
                                       : Text(
                                           _isRegisterMode
-                                              ? 'Create account'
-                                              : 'Sign in',
+                                              ? 'Создать аккаунт'
+                                              : 'Войти',
                                         ),
                                 ),
                               ),
@@ -235,8 +235,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                                       },
                                 child: Text(
                                   _isRegisterMode
-                                      ? 'Already have account? Sign in'
-                                      : 'Need account? Register',
+                                      ? 'Уже есть аккаунт? Войти'
+                                      : 'Нет аккаунта? Зарегистрироваться',
                                 ),
                               ),
                             ],

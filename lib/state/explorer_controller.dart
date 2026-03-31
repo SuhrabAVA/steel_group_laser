@@ -106,19 +106,19 @@ class ExplorerController extends StateNotifier<ExplorerState> {
       (item) => item.id == folderId,
     );
     if (folder == null) {
-      throw const AppException('Folder not found.');
+      throw const AppException('Папка не найдена.');
     }
     if (folder.parentId == null) {
-      throw const AppException('Root folder cannot be moved.');
+      throw const AppException('Корневую папку нельзя переместить.');
     }
 
     if (targetParentId == folderId) {
-      throw const AppException('A folder cannot be moved into itself.');
+      throw const AppException('Нельзя переместить папку в саму себя.');
     }
 
     final descendants = collectDescendantFolderIds(folderId);
     if (targetParentId != null && descendants.contains(targetParentId)) {
-      throw const AppException('Cannot move folder into its own descendant.');
+      throw const AppException('Нельзя переместить папку в ее собственную вложенную папку.');
     }
 
     await _mutate(() async {
@@ -134,10 +134,10 @@ class ExplorerController extends StateNotifier<ExplorerState> {
       (item) => item.id == folderId,
     );
     if (folder == null) {
-      throw const AppException('Folder not found.');
+      throw const AppException('Папка не найдена.');
     }
     if (folder.parentId == null) {
-      throw const AppException('Root folder cannot be deleted.');
+      throw const AppException('Корневую папку нельзя удалить.');
     }
 
     await _mutate(() async {

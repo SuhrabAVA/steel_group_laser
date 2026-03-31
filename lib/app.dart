@@ -15,7 +15,7 @@ class SteelExplorerApp extends ConsumerWidget {
     final authState = ref.watch(authControllerProvider);
 
     return MaterialApp(
-      title: 'Steel Group Laser Explorer',
+      title: 'Проводник Steel Group Laser',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       theme: ThemeData(

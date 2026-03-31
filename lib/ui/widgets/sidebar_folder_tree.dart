@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../models/explorer_drag_payload.dart';
@@ -39,7 +39,7 @@ class SidebarFolderTree extends StatelessWidget {
                 Icon(Icons.account_tree_outlined, color: AppColors.accent),
                 SizedBox(width: 10),
                 Text(
-                  'Folders',
+                  'Папки',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
               ],
