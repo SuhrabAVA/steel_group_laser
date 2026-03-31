@@ -39,4 +39,6 @@ abstract class ExplorerRepository {
   Future<void> deleteFile(FileItem file);
 
   Future<Uint8List> downloadFile(String storagePath);
+
+  Stream<void> watchChanges();
 }

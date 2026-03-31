@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:mime/mime.dart';
@@ -311,6 +312,51 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     } catch (error, stackTrace) {
       throw _toAppException(error, stackTrace);
     }
+  }
+
+  @override
+  Stream<void> watchChanges() {
+    final user = _requireUser();
+    final streamController = StreamController<void>.broadcast();
+
+    final channel = _client.channel('explorer_changes_${user.id}_${_uuid.v4()}')
+      ..onPostgresChanges(
+        event: PostgresChangeEvent.all,
+        schema: 'public',
+        table: 'folders',
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'owner_id',
+          value: user.id,
+        ),
+        callback: (_) {
+          if (!streamController.isClosed) {
+            streamController.add(null);
+          }
+        },
+      )
+      ..onPostgresChanges(
+        event: PostgresChangeEvent.all,
+        schema: 'public',
+        table: 'files',
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'owner_id',
+          value: user.id,
+        ),
+        callback: (_) {
+          if (!streamController.isClosed) {
+            streamController.add(null);
+          }
+        },
+      )
+      ..subscribe();
+
+    streamController.onCancel = () async {
+      await _client.removeChannel(channel);
+    };
+
+    return streamController.stream;
   }
 
   AppException _toAppException(Object error, StackTrace stackTrace) {
