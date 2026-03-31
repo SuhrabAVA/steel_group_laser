@@ -22,7 +22,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
   User _requireUser() {
     final user = _client.auth.currentUser;
     if (user == null) {
-      throw const AppException('Пользователь не авторизован.');
+      throw const AppException('User is not authenticated.');
     }
     return user;
   }
@@ -33,7 +33,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     try {
       final result = await _client.rpc(
         'ensure_user_root_folder',
-        params: {'root_name': 'Главная'},
+        params: {'root_name': 'Home'},
       );
 
       if (result is String && result.isNotEmpty) {
@@ -47,7 +47,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
         }
       }
 
-      throw const AppException('Не удалось определить корневую папку.');
+      throw const AppException('Failed to resolve root folder.');
     } catch (error, stackTrace) {
       throw _toAppException(error, stackTrace);
     }
@@ -94,20 +94,19 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     required String name,
     String? parentId,
   }) async {
-    _requireUser();
+    final user = _requireUser();
     final safeName = _sanitizeFolderName(name);
     try {
-      final response = await _client.rpc(
-        'create_user_folder',
-        params: {
-          'folder_name': safeName,
-          'folder_parent_id': parentId,
-        },
-      );
-
-      if (response is! Map<String, dynamic>) {
-        throw const AppException('Не удалось создать папку.');
-      }
+      final response = await _client
+          .from('folders')
+          .insert({
+            'owner_id': user.id,
+            'parent_id': parentId,
+            'name': safeName,
+            'path': '',
+          })
+          .select()
+          .single();
 
       return FolderNode.fromMap(response);
     } catch (error, stackTrace) {
@@ -187,7 +186,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     final user = _requireUser();
     final localFile = File(localPath);
     if (!localFile.existsSync()) {
-      throw const AppException('Файл не найден на локальном диске.');
+      throw const AppException('File not found on local disk.');
     }
 
     final rawName = p.basename(localFile.path);
@@ -299,7 +298,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     if (error is PostgrestException) {
       if (error.code == '23505') {
         return AppException(
-          'Конфликт имен: элемент с таким именем уже существует в целевой папке.',
+          'Name conflict: an item with this name already exists in the target folder.',
           cause: error,
           stackTrace: stackTrace,
         );
@@ -321,7 +320,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
   String _sanitizeFolderName(String value) {
     final cleaned = value.trim().replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
     if (cleaned.isEmpty) {
-      throw const AppException('Имя папки не может быть пустым.');
+      throw const AppException('Folder name cannot be empty.');
     }
     return cleaned;
   }
@@ -329,7 +328,7 @@ class SupabaseExplorerRepository implements ExplorerRepository {
   String _sanitizeFileName(String value) {
     final cleaned = value.trim().replaceAll(RegExp(r'[\\/:*?"<>|]'), '_');
     if (cleaned.isEmpty) {
-      throw const AppException('Имя файла не может быть пустым.');
+      throw const AppException('File name cannot be empty.');
     }
     return cleaned;
   }
