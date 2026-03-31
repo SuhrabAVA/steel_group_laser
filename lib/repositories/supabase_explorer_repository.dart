@@ -94,21 +94,28 @@ class SupabaseExplorerRepository implements ExplorerRepository {
     required String name,
     String? parentId,
   }) async {
-    final user = _requireUser();
+    _requireUser();
     final safeName = _sanitizeFolderName(name);
     try {
-      final response = await _client
+      final response = await _client.rpc(
+        'create_user_folder',
+        params: {
+          'folder_name': safeName,
+          'folder_parent_id': parentId,
+        },
+      );
+
+      if (response is! String || response.isEmpty) {
+        throw const AppException('Не удалось создать папку.');
+      }
+
+      final createdFolder = await _client
           .from('folders')
-          .insert({
-            'owner_id': user.id,
-            'parent_id': parentId,
-            'name': safeName,
-            'path': '',
-          })
           .select()
+          .eq('id', response)
           .single();
 
-      return FolderNode.fromMap(response);
+      return FolderNode.fromMap(createdFolder);
     } catch (error, stackTrace) {
       throw _toAppException(error, stackTrace);
     }
